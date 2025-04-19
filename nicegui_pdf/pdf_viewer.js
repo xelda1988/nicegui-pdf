@@ -10,46 +10,38 @@ var __PDF_DOC,
 
 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.5.141/pdf.worker.min.js';
 
-function showPDF(pdf_url, canvas, canvas_ctx) {
-  $("#pdf-loader").show();
+function showPDF(self, pdf_url, canvas, canvas_ctx) {
 
   PDFJS.getDocument({ url: pdf_url }).promise.then(function (pdf_doc) {
-      __PDF_DOC = pdf_doc;
-      __TOTAL_PAGES = __PDF_DOC.numPages;
+      self.pdf_doc = pdf_doc;
+      self.num_pages = self.pdf_doc.numPages;
 
       // Hide the pdf loader and show pdf container in HTML
-      $("#pdf-loader").hide();
       $("#pdf-contents").show();
-      $("#pdf-total-pages").text(__TOTAL_PAGES);
+      $("#pdf-total-pages").text(self.num_pages);
 
       // Show the first page
-      showPage(1, canvas, canvas_ctx);
+      showPage(self, 1, canvas, canvas_ctx);
   }).catch(function (error) {
-      // If error re-show the upload button
-      $("#pdf-loader").hide();
-      $("#upload-button").show();
-
       alert(error.message);
   });
 }
 
 
-function showPage(page_no, canvas, canvas_ctx) {
+function showPage(self, page_no, canvas, canvas_ctx) {
   __PAGE_RENDERING_IN_PROGRESS = 1;
-  __CURRENT_PAGE = page_no;
 
   // Disable Prev & Next buttons while page is being loaded
   $("#pdf-next, #pdf-prev").attr('disabled', 'disabled');
 
   // While page is being rendered hide the canvas and show a loading message
   $("#pdf-canvas").hide();
-  $("#page-loader").show();
 
   // Update current page in HTML
   $("#pdf-current-page").text(page_no);
 
   // Fetch the page
-  __PDF_DOC.getPage(page_no).then(function (page) {
+  self.pdf_doc.getPage(page_no).then(function (page) {
       // Get viewport of the page at required scale
       let viewport = page.getViewport({
           scale: 1,
@@ -63,6 +55,7 @@ function showPage(page_no, canvas, canvas_ctx) {
 
       // Set canvas height
       canvas.height = viewport.height;
+      console.log(canvas.height);
 
       var renderContext = {
           canvasContext: canvas_ctx,
@@ -78,7 +71,6 @@ function showPage(page_no, canvas, canvas_ctx) {
 
           // Show the canvas and hide the page loader
           $("#pdf-canvas").show();
-          $("#page-loader").hide();
 
           // Return the text contents of the page after the pdf has been rendered in the canvas
           return page.getTextContent();
@@ -108,22 +100,15 @@ function showPage(page_no, canvas, canvas_ctx) {
 export default {
     template: `
     <div id="pdf-main-container">
-        <div id="pdf-loader">Loading document ...</div>
         <div id="pdf-contents">
             <div id="pdf-meta">
-                <div id="pdf-buttons">
-                    <button id="pdf-prev">Previous</button>
-                    <button id="pdf-next">Next</button>
-                    <button id="pdf-print">PRINT</button>
-                </div>
                 <div id="page-count-container">Page <div id="pdf-current-page"></div> of <div id="pdf-total-pages">
                     </div>
                 </div>
             </div>
             <canvas id="pdf-canvas" width="800"></canvas>
             <div id="text-layer" class="textLayer"></div>
-            <div id="page-loader">Loading page ...</div>
-        </div>
+         </div>
     </div>
     `,
     props: {
@@ -132,28 +117,41 @@ export default {
     },
     data() {
       return {
-        num_pages: 0,
+        num_pages: 1,
         page_number: 1,
         pdf: null,
       };
     },
     methods: {
       init() {
+        var self = this;
         var canvas = $('#pdf-canvas').get(0);
         var canvas_ctx = canvas.getContext('2d');
         
-        showPDF(this.path, canvas, canvas_ctx);
+        this.page_number = 1;
+        showPDF(self, this.path, canvas, canvas_ctx);
         console.log("INIT");
+        console.log(this.num_pages);
       },
 
-      show_page() {
-        this.page_number = 1;
-        // showPage();
+      previous_page() {
+        var self = this;
+        var canvas = $('#pdf-canvas').get(0);
+        var canvas_ctx = canvas.getContext('2d');
+
+        this.page_number -= 1;
+        this.page_number = Math.max(this.page_number, 1);
+        showPage(self, this.page_number, canvas, canvas_ctx);
       },
 
       next_page(){
+        var self = this;
+        var canvas = $('#pdf-canvas').get(0);
+        var canvas_ctx = canvas.getContext('2d');
+        
         this.page_number += 1;
-        // showPage();
+        this.page_number = Math.min(this.page_number, this.num_pages);
+        showPage(self, this.page_number, canvas, canvas_ctx);
       }
     },
   };

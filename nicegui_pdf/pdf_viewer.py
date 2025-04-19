@@ -59,14 +59,6 @@ css = """
     box-sizing: border-box;
 }
 
-#page-loader {
-    height: 100px;
-    line-height: 100px;
-    text-align: center;
-    display: none;
-    color: #999999;
-    font-size: 13px;
-}
 """
 
 class PdfViewer(Element, component="pdf_viewer.js"):
@@ -79,8 +71,8 @@ class PdfViewer(Element, component="pdf_viewer.js"):
         ui.add_head_html('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.5.141/pdf_viewer.min.css" />')
         ui.add_css(css)
 
-    def show_page(self):
-        self.run_method("show_page")
+    def previous_page(self):
+        self.run_method("previous_page")
 
     def next_page(self) -> None:
         self.run_method("next_page")
