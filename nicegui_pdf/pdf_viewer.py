@@ -79,8 +79,3 @@ class PdfViewer(Element, component="pdf_viewer.js"):
 
     def init(self) -> None:
         self.run_method("init")
-
-    def test(self) -> None:
-        # self.run_method("init")
-        print(self.numPages)
-        #self.run_method("reset")
