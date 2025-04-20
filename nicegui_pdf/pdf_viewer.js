@@ -1,23 +1,10 @@
-import "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.5.141/pdf.min.js"
-import "https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"
-
-
-var PDFJS = window['pdfjs-dist/build/pdf'];
-PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.5.141/pdf.worker.min.js';
-
-
 export default {
     template: `
-    <div id="pdf-main-container">
-        <div id="pdf-contents">
-            <div id="pdf-meta">
-                <div id="page-count-container">Page <div id="pdf-current-page"></div> of <div id="pdf-total-pages">
-                    </div>
-                </div>
-            </div>
-            <canvas id="pdf-canvas" width="800"></canvas>
+    <div>
+        <div id="pdf-contents" style="display: none;">
+            <canvas id="pdf-canvas" width="100%"></canvas>
             <div id="text-layer" class="textLayer"></div>
-         </div>
+        </div>
     </div>
     `,
     props: {
@@ -57,6 +44,11 @@ export default {
         self.showPage(this.page_number);
       },
 
+      load_worker(worker) {
+        PDFJS.GlobalWorkerOptions.workerSrc = worker;
+      },
+
+
       showPDF(pdf_url) {
         var self = this;
         PDFJS.getDocument({ url: pdf_url }).promise.then(function (pdf_doc) {
@@ -76,13 +68,17 @@ export default {
 
       showPage(page_no) {
         var self = this;
-
-        $("#pdf-next, #pdf-prev").attr('disabled', 'disabled');
-        $("#pdf-canvas").hide();
-        $("#pdf-current-page").text(page_no);
       
         // Fetch the page
         self.pdf_doc.getPage(page_no).then(function (page) {
+            // Make it slightly smaller than the parent container to ensure
+            // the parent is always larger (e.g. a border is always shown)
+            var width = $("#pdf-contents").width();
+            width -= parseInt(width * 0.05);
+
+            // set the canvas width to the width of the parent container
+            self.canvas.width = width;
+
             // Get viewport of the page at required scale
             let viewport = page.getViewport({
                 scale: 1,
@@ -103,13 +99,6 @@ export default {
       
             // Render the page contents in the canvas
             page.render(renderContext).promise.then(function () {
-                // Re-enable Prev & Next buttons
-                $("#pdf-next, #pdf-prev").removeAttr('disabled');
-      
-                // Show the canvas and hide the page loader
-                $("#pdf-canvas").show();
-      
-                // Return the text contents of the page after the pdf has been rendered in the canvas
                 return page.getTextContent();
             }).then(function (textContent) {
                 // Get canvas offset

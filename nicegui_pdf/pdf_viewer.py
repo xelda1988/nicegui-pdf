@@ -1,65 +1,9 @@
 from typing import Callable, Optional
+import os
 
 from nicegui import ui
 from nicegui.element import Element
 
-
-css = """
-#upload-button {
-    width: 150px;
-    display: block;
-    margin: 20px auto;
-}
-
-#file-to-upload {
-    display: none;
-}
-
-#pdf-main-container {
-    width: 400px;
-    margin: 20px auto;
-}
-
-#pdf-loader {
-    display: none;
-    text-align: center;
-    color: #999999;
-    font-size: 13px;
-    line-height: 100px;
-    height: 100px;
-}
-
-#pdf-contents {
-    display: none;
-}
-
-#pdf-meta {
-    overflow: hidden;
-    margin: 0 0 20px 0;
-}
-
-#pdf-buttons {
-    float: left;
-}
-
-#page-count-container {
-    float: right;
-}
-
-#pdf-current-page {
-    display: inline;
-}
-
-#pdf-total-pages {
-    display: inline;
-}
-
-#pdf-canvas {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-}
-
-"""
 
 class PdfViewer(Element, component="pdf_viewer.js"):
 
@@ -68,9 +12,16 @@ class PdfViewer(Element, component="pdf_viewer.js"):
         self._props['path'] = path
         self.on('change', on_change)
 
-        ui.add_head_html('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.5.141/pdf_viewer.min.css" />')
-        ui.add_css(css)
+        # Load pdf_viewer.min.css from same path as this file
+        self._load_css_file("pdf_viewer.min.css")
+        self._load_js_file("pdf.min.js")
+        self._load_js_file("jquery.min.js")
+        self._load_worker("pdf.worker.min.js")
 
+
+    #
+    # Functions
+    #
     def previous_page(self):
         self.run_method("previous_page")
 
@@ -79,3 +30,33 @@ class PdfViewer(Element, component="pdf_viewer.js"):
 
     def init(self) -> None:
         self.run_method("init")
+    
+
+    #
+    # Helper for pdf.js library
+    #
+    def _load_worker(self, resource: str) -> None:
+        # Load the worker from the same path as this file
+        resource_path = os.path.join(os.path.dirname(__file__), "lib", resource)
+        with open(resource_path, 'r') as f:
+            workerjs = f.read()
+        
+        js_content = f"""
+            var PDFJS = window['pdfjs-dist/build/pdf'];
+            PDFJS.GlobalWorkerOptions.workerSrc = {workerjs};
+        """
+        ui.add_body_html(f"\n<script>\n{js_content}\n</script>\n")
+
+    def _load_css_file(self, resource: str):
+        css_content = self._load_lib_file(resource)
+        ui.add_css(css_content)
+
+    def _load_js_file(self, resource: str):
+        js_content = self._load_lib_file(resource)
+        ui.add_body_html(f"\n<script>\n{js_content}\n</script>\n")
+
+    def _load_lib_file(self, resource: str) -> str:
+        # Load the resource from the same path as this file
+        resource_path = os.path.join(os.path.dirname(__file__), "lib", resource)
+        with open(resource_path, 'r') as f:
+            return f.read()
