@@ -54,10 +54,7 @@ export default {
         PDFJS.getDocument({ url: pdf_url }).promise.then(function (pdf_doc) {
             self.pdf_doc = pdf_doc;
             self.num_pages = self.pdf_doc.numPages;
-      
-            // Hide the pdf loader and show pdf container in HTML
             $("#pdf-contents").show();
-            $("#pdf-total-pages").text(self.num_pages);
       
             // Show the first page
             self.showPage(1);
@@ -74,7 +71,7 @@ export default {
             // Make it slightly smaller than the parent container to ensure
             // the parent is always larger (e.g. a border is always shown)
             var width = $("#pdf-contents").width();
-            width -= parseInt(width * 0.05);
+            width -= parseInt(width * 0.01);
 
             // set the canvas width to the width of the parent container
             self.canvas.width = width;
