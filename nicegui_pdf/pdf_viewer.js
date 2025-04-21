@@ -14,7 +14,7 @@ export default {
       return {
         id: this.uuidv4(),
         num_pages: 1,
-        page_number: 1,
+        current_page: 1,
         pdf: null,
         is_rendering: false,
       };
@@ -49,17 +49,17 @@ export default {
         return "text-layer-" + this.id;
       },
 
-      open_page(page_number){
-        var old_page_number = this.page_number;
+      open_page(current_page){
+        var old_current_page = this.current_page;
 
-        this.page_number = page_number;
-        this.page_number = Math.max(this.page_number, 1);
-        this.page_number = Math.min(this.page_number, this.num_pages);
+        this.current_page = current_page;
+        this.current_page = Math.max(this.current_page, 1);
+        this.current_page = Math.min(this.current_page, this.num_pages);
 
-        if (this.page_number != old_page_number) {
+        if (this.current_page != old_current_page) {
           this._showPage();
         } else {
-          this.$emit("change_page_number", this.page_number);
+          this.$emit("change_current_page", this.current_page);
         }
       },
       
@@ -72,9 +72,9 @@ export default {
         PDFJS.getDocument({ url: this.path }).promise.then(function (pdf_doc) {
             self.pdf_doc = pdf_doc;
             self.num_pages = self.pdf_doc.numPages;
-            self.page_number = 1;
+            self.current_page = 1;
             self.$emit("change_num_pages", self.num_pages);
-            self.$emit("change_page_number", self.page_number);
+            self.$emit("change_current_page", self.current_page);
 
             $("#" + self.getPdfContentId()).show();
             self._showPage();
@@ -95,7 +95,7 @@ export default {
       _showPage() {
         var self = this;
         if (self.is_rendering) {
-            console.log("Already rendering. Skipping page " + self.page_number + "...");
+            console.log("Already rendering. Skipping page " + self.current_page + "...");
             return;
         }
         
@@ -103,7 +103,7 @@ export default {
         self.$emit("change_is_rendering", self.is_rendering);
       
         // Fetch the page
-        self.pdf_doc.getPage(self.page_number).then(function (page) {
+        self.pdf_doc.getPage(self.current_page).then(function (page) {
             // Make it slightly smaller than the parent container to ensure
             // the parent is always larger (e.g. a border is always shown)
             var width = $("#" + self.getPdfContentId()).width();
@@ -154,7 +154,7 @@ export default {
             }).finally(function () {
                 self.is_rendering = false;
                 self.$emit("change_is_rendering", self.is_rendering);
-                self.$emit("change_page_number", self.page_number);
+                self.$emit("change_current_page", self.current_page);
             });
         })
       }
