@@ -61,7 +61,7 @@ If you like it and want to buy me a coffee:
 
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=Y4PDJU84LC3N2)
 
-Thanks you so much!
+Thank you so much!
 
 ## References
 - PDF.js (https://mozilla.github.io/pdf.js/)
