@@ -45,6 +45,7 @@ A full example demonstrating all features is given in `example/main.py`:
 - [x] Binding of selected text
 - [x] Support resizing
 - [ ] Binding on path
+- [ ] Highlight text (not 100% sure yet)
 - [ ] Push to pypi
 
 
