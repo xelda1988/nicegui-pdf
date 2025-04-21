@@ -4,7 +4,7 @@ import os
 from nicegui import ui
 from nicegui.element import Element
 from nicegui.events import GenericEventArguments
-from nicegui.binding import BindableProperty, bind_to
+from nicegui.binding import BindableProperty, bind_to, bind_from, bind
 
 class PdfViewer(Element, component="pdf_viewer.js"):
 
@@ -14,6 +14,7 @@ class PdfViewer(Element, component="pdf_viewer.js"):
 
     num_pages = BindableProperty()
     is_rendering = BindableProperty()
+    selected_text = BindableProperty()
 
     def __init__(self, path: str) -> None:
         super().__init__()
@@ -21,10 +22,12 @@ class PdfViewer(Element, component="pdf_viewer.js"):
         self.page_number = 1
         self.num_pages = 0
         self.is_rendering = False
+        self.selected_text = ""
         
         self.on("change_page_number", self._on_page_change_in_js)
         self.on("change_num_pages", self._on_number_pages_change_in_js)
         self.on("change_is_rendering", self._on_is_rendering_change_in_js)
+        self.on("change_selected_text", self._on_selected_text_change_in_js)
 
         # Load pdf_viewer.min.css from same path as this file
         self._load_css_file("pdf_viewer.min.css")
@@ -35,11 +38,26 @@ class PdfViewer(Element, component="pdf_viewer.js"):
     #
     # Bindables
     #
+    def bind_page_number(self,
+                        target_object: Any,
+                        target_name: str = 'page_number',
+                        forward: Callable[..., Any] = lambda x: x,
+                        backward: Callable[..., Any] = lambda x: x,) -> Self:
+        bind(self, 'page_number', target_object, target_name, forward=forward, backward=backward)
+        return self
+
     def bind_page_number_to(self,
                      target_object: Any,
                      target_name: str = 'page_number',
                      forward: Callable[..., Any] = lambda x: x,) -> Self:
         bind_to(self, 'page_number', target_object, target_name, forward)
+        return self
+    
+    def bind_page_number_from(self,
+                        target_object: Any,
+                        target_name: str = 'page_number',
+                        backward: Callable[..., Any] = lambda x: x,) -> Self:
+        bind_from(self, 'page_number', target_object, target_name, backward)
         return self
     
     def bind_num_pages_to(self,
@@ -54,6 +72,13 @@ class PdfViewer(Element, component="pdf_viewer.js"):
                         target_name: str = 'is_rendering',
                         forward: Callable[..., Any] = lambda x: x,) -> Self:
         bind_to(self, 'is_rendering', target_object, target_name, forward)
+        return self
+    
+    def bind_selected_text_to(self,
+                        target_object: Any,
+                        target_name: str = 'selected_text',
+                        forward: Callable[..., Any] = lambda x: x,) -> Self:
+        bind_to(self, 'selected_text', target_object, target_name, forward)
         return self
 
     #
@@ -91,6 +116,11 @@ class PdfViewer(Element, component="pdf_viewer.js"):
         
         self.is_rendering = e.args
 
+    def _on_selected_text_change_in_js(self, e: GenericEventArguments):
+        if(self.selected_text == e.args):
+            return
+        
+        self.selected_text = e.args
     
 
     #

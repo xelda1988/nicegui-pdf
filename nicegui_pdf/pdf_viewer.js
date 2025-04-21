@@ -78,6 +78,15 @@ export default {
 
             $("#" + self.getPdfContentId()).show();
             self._showPage();
+
+            var text_layer = document.getElementById(self.getPdfContentId());
+            text_layer.addEventListener('selectstart', () => {
+              $(document).one('mouseup', function() {
+                var selection = this.getSelection();
+                self.$emit("change_selected_text", selection.toString());
+              });
+            });
+
         }).catch(function (error) {
             alert(error.message);
         });
