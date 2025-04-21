@@ -9,7 +9,6 @@ export default {
     `,
     props: {
       path: String,
-      pdf: Object,
     },
     data() {
       return {
@@ -17,6 +16,7 @@ export default {
         num_pages: 1,
         page_number: 1,
         pdf: null,
+        is_rendering: false,
       };
     },
     mounted(){
@@ -49,22 +49,18 @@ export default {
         return "text-layer-" + this.id;
       },
 
+      open_page(page_number){
+        var old_page_number = this.page_number;
 
-      /*
-       * Exported funs
-       */
-      previous_page(){
-        var self = this;
-        this.page_number -= 1;
+        this.page_number = page_number;
         this.page_number = Math.max(this.page_number, 1);
-        self._showPage();
-      },
-
-      next_page(){
-        var self = this;
-        this.page_number += 1;
         this.page_number = Math.min(this.page_number, this.num_pages);
-        self._showPage();
+
+        if (this.page_number != old_page_number) {
+          this._showPage();
+        } else {
+          this.$emit("change_page_number", this.page_number);
+        }
       },
       
 
@@ -76,9 +72,11 @@ export default {
         PDFJS.getDocument({ url: this.path }).promise.then(function (pdf_doc) {
             self.pdf_doc = pdf_doc;
             self.num_pages = self.pdf_doc.numPages;
+            self.page_number = 1;
+            self.$emit("change_num_pages", self.num_pages);
+            self.$emit("change_page_number", self.page_number);
+
             $("#" + self.getPdfContentId()).show();
-      
-            // Show the first page
             self._showPage();
         }).catch(function (error) {
             alert(error.message);
@@ -87,6 +85,13 @@ export default {
 
       _showPage() {
         var self = this;
+        if (self.is_rendering) {
+            console.log("Already rendering. Skipping page " + self.page_number + "...");
+            return;
+        }
+        
+        self.is_rendering = true;
+        self.$emit("change_is_rendering", self.is_rendering);
       
         // Fetch the page
         self.pdf_doc.getPage(self.page_number).then(function (page) {
@@ -136,8 +141,13 @@ export default {
                     viewport: viewport,
                     textDivs: []
                 });
+
+            }).finally(function () {
+                self.is_rendering = false;
+                self.$emit("change_is_rendering", self.is_rendering);
+                self.$emit("change_page_number", self.page_number);
             });
-        });
+        })
       }
     },
   };
