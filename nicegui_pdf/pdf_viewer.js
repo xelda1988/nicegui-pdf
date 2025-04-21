@@ -19,12 +19,26 @@ export default {
         pdf: null,
       };
     },
+    mounted(){
+      var self = this;
+      this.$nextTick(function () {
+        self.canvas = $("#" + self.getPdfCanvasId()).get(0);
+        self.canvas_ctx = self.canvas.getContext('2d');
+        this.showPDF(this.path);
+      })
+    },
+    created() {
+      window.addEventListener("resize", this.onResize);
+    },
     methods: {
       uuidv4() {
         return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
           (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
         );
       },      
+      onResize(e){
+        this.showPage();
+      },
       getPdfContentId(){
         return "pdf-contents-" + this.id;
       },
@@ -34,29 +48,18 @@ export default {
       getTextLayerId(){
         return "text-layer-" + this.id;
       },
-      init() {
-        var self = this;
-        self.canvas = $("#" + self.getPdfCanvasId()).get(0);
-        self.canvas_ctx = self.canvas.getContext('2d');
-        
-        this.page_number = 1;
-        this.showPDF(this.path);
-        console.log("INIT");
-        console.log(this.num_pages);
-      },
-
       previous_page(){
         var self = this;
         this.page_number -= 1;
         this.page_number = Math.max(this.page_number, 1);
-        self.showPage(this.page_number);
+        self.showPage();
       },
 
       next_page(){
         var self = this;
         this.page_number += 1;
         this.page_number = Math.min(this.page_number, this.num_pages);
-        self.showPage(this.page_number);
+        self.showPage();
       },
 
       load_worker(worker) {
@@ -72,17 +75,17 @@ export default {
             $("#" + self.getPdfContentId()).show();
       
             // Show the first page
-            self.showPage(1);
+            self.showPage();
         }).catch(function (error) {
             alert(error.message);
         });
       },
 
-      showPage(page_no) {
+      showPage() {
         var self = this;
       
         // Fetch the page
-        self.pdf_doc.getPage(page_no).then(function (page) {
+        self.pdf_doc.getPage(self.page_number).then(function (page) {
             // Make it slightly smaller than the parent container to ensure
             // the parent is always larger (e.g. a border is always shown)
             var width = $("#" + self.getPdfContentId()).width();
