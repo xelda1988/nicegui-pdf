@@ -37,7 +37,7 @@ PdfViewer(path).classes("w-full").style(
 
 A full example demonstrating all features is given in `example/main.py`:
 <p align="center">
-    <img src="assets/screenshot.png" alt="table" width="700"/>
+    <img src="https://raw.githubusercontent.com/peerdavid/nicegui-pdf/main/assets/screenshot.png" alt="table" width="700"/>
 </p> 
 
 

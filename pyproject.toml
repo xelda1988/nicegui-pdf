@@ -1,6 +1,6 @@
 [project]
 name = "nicegui-pdf"
-version = "0.0.2"
+version = "0.0.4"
 description = "A PDF viewer for nicegui based on pdf.js"
 authors = [
   { name="David Peer", email="david.peer@outlook.com" },
@@ -14,8 +14,8 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/peerdavid/nicegui_pdf"
-Issues = "https://github.com/peerdavid/nicegui_pdf/issues"
+Repository = "https://github.com/peerdavid/nicegui-pdf"
+Issues = "https://github.com/peerdavid/nicegui-pdf/issues"
 
 
 [build-system]
