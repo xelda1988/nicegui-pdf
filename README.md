@@ -58,7 +58,7 @@ I'm neither a JS, NiceGUI or VUE expert. I simply tested a few things and found 
 
 
 ## Donate
-If you like it and want to buy me a coffe:
+If you like it and want to buy me a coffee:
 
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=Y4PDJU84LC3N2)
 
