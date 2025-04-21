@@ -1,6 +1,5 @@
 # nicegui-pdf
-A NiceGUI PDF component (using pdf.js) to nicely integrate PDFs without the need for iframes without having
-any control on which page is shown or without the possibility to read the seelcted text.
+A NiceGUI PDF component (using pdf.js) to nicely integrate PDFs without the need for iframes without having any control on which page is shown or without the possibility to read the seelcted text. A quick example is shown below:
 
 ```python
     from nicegui import ui, app
@@ -33,7 +32,7 @@ any control on which page is shown or without the possibility to read the seelct
 
 A full example demonstrating all features is given in `example/main.py`:
 <p align="center">
-<img src="assets/screenshot.png" alt="table" width="700"/>
+    <img src="assets/screenshot.png" alt="table" width="700"/>
 </p> 
 
 
@@ -44,7 +43,7 @@ A full example demonstrating all features is given in `example/main.py`:
 - [x] Binding of pages etc
 - [x] Binding of selected text
 - [x] Support resizing
-- [ ] Binding on path
+- [ ] Binding on path (load new pdf document)
 - [ ] Highlight text (not 100% sure yet)
 - [ ] Push to pypi
 
