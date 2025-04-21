@@ -6,10 +6,10 @@
     "configurations": [
 
         {
-            "name": "test.py",
+            "name": "Example",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/examples/hello_world/main.py",
+            "program": "${workspaceFolder}/example/main.py",
             "console": "integratedTerminal"
         }
     ]

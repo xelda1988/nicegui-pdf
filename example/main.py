@@ -31,7 +31,7 @@ with ui.row().classes("w-4/6 no-wrap mx-auto"):
             ui.button("Next", on_click=next_page).props("outline")
 
         # Load the PDF component
-        path = app.add_static_file(local_file="examples/hello_world/paper.pdf")
+        path = app.add_static_file(local_file="example/paper.pdf")
         PdfViewer(path).classes("w-full").style(
             "border: solid 1px gray;"
         ).bind_page_number(

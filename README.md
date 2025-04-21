@@ -1,5 +1,18 @@
 # nicegui-pdf
-A PDF component for nicegui
+A PDF component (using pdf.js) to nicely integrate PDFs into nicegui using bindings.
+This makes it easy to open a specific page or to get the content that is currently selected.
+- page_number
+- num_pages
+- is_rendering
+- selected text
 
+<img src="assets/screenshot.png" alt="table" width="600"/>
 
-WIP
+## ToDo's
+- [x] Basic viewer
+- [x] Text Overlay
+- [x] Binding of pages etc
+- [x] Binding of selected text
+- [x] Support resizing
+- [ ] Binding on path
+- [ ] Push to pypi
