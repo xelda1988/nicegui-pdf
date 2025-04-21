@@ -24,21 +24,21 @@ export default {
       this.$nextTick(function () {
         self.canvas = $("#" + self.getPdfCanvasId()).get(0);
         self.canvas_ctx = self.canvas.getContext('2d');
-        this.showPDF(this.path);
+        this._loadPdf();
       })
     },
     created() {
-      window.addEventListener("resize", this.onResize);
+      window.addEventListener("resize", this._showPage);
     },
     methods: {
+      /*
+       * IDs for multi component support
+       */
       uuidv4() {
         return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
           (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
         );
       },      
-      onResize(e){
-        this.showPage();
-      },
       getPdfContentId(){
         return "pdf-contents-" + this.id;
       },
@@ -48,40 +48,44 @@ export default {
       getTextLayerId(){
         return "text-layer-" + this.id;
       },
+
+
+      /*
+       * Exported funs
+       */
       previous_page(){
         var self = this;
         this.page_number -= 1;
         this.page_number = Math.max(this.page_number, 1);
-        self.showPage();
+        self._showPage();
       },
 
       next_page(){
         var self = this;
         this.page_number += 1;
         this.page_number = Math.min(this.page_number, this.num_pages);
-        self.showPage();
+        self._showPage();
       },
-
-      load_worker(worker) {
-        PDFJS.GlobalWorkerOptions.workerSrc = worker;
-      },
-
-
-      showPDF(pdf_url) {
+      
+      
+      /*
+       * Private functions
+       */
+      _loadPdf() {
         var self = this;
-        PDFJS.getDocument({ url: pdf_url }).promise.then(function (pdf_doc) {
+        PDFJS.getDocument({ url: this.path }).promise.then(function (pdf_doc) {
             self.pdf_doc = pdf_doc;
             self.num_pages = self.pdf_doc.numPages;
             $("#" + self.getPdfContentId()).show();
       
             // Show the first page
-            self.showPage();
+            self._showPage();
         }).catch(function (error) {
             alert(error.message);
         });
       },
 
-      showPage() {
+      _showPage() {
         var self = this;
       
         // Fetch the page
