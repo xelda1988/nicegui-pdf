@@ -6,10 +6,13 @@ from nicegui.element import Element
 from nicegui.events import GenericEventArguments
 from nicegui.binding import BindableProperty, bind_to, bind_from, bind
 
+
 class PdfViewer(Element, component="pdf_viewer.js"):
 
     current_page = BindableProperty(
-        on_change=lambda sender, current_page: cast(Self, sender)._on_page_change_in_py(current_page)
+        on_change=lambda sender, current_page: cast(Self, sender)._on_page_change_in_py(
+            current_page
+        )
     )
 
     num_pages = BindableProperty()
@@ -23,7 +26,7 @@ class PdfViewer(Element, component="pdf_viewer.js"):
         self.num_pages = 0
         self.is_rendering = False
         self.selected_text = ""
-        
+
         self.on("change_current_page", self._on_page_change_in_js)
         self.on("change_num_pages", self._on_number_pages_change_in_js)
         self.on("change_is_rendering", self._on_is_rendering_change_in_js)
@@ -38,47 +41,66 @@ class PdfViewer(Element, component="pdf_viewer.js"):
     #
     # Bindables
     #
-    def bind_current_page(self,
-                        target_object: Any,
-                        target_name: str = 'current_page',
-                        forward: Callable[..., Any] = lambda x: x,
-                        backward: Callable[..., Any] = lambda x: x,) -> Self:
-        bind(self, 'current_page', target_object, target_name, forward=forward, backward=backward)
+    def bind_current_page(
+        self,
+        target_object: Any,
+        target_name: str = "current_page",
+        forward: Callable[..., Any] = lambda x: x,
+        backward: Callable[..., Any] = lambda x: x,
+    ) -> Self:
+        bind(
+            self,
+            "current_page",
+            target_object,
+            target_name,
+            forward=forward,
+            backward=backward,
+        )
         return self
 
-    def bind_current_page_to(self,
-                     target_object: Any,
-                     target_name: str = 'current_page',
-                     forward: Callable[..., Any] = lambda x: x,) -> Self:
-        bind_to(self, 'current_page', target_object, target_name, forward)
+    def bind_current_page_to(
+        self,
+        target_object: Any,
+        target_name: str = "current_page",
+        forward: Callable[..., Any] = lambda x: x,
+    ) -> Self:
+        bind_to(self, "current_page", target_object, target_name, forward)
         return self
-    
-    def bind_current_page_from(self,
-                        target_object: Any,
-                        target_name: str = 'current_page',
-                        backward: Callable[..., Any] = lambda x: x,) -> Self:
-        bind_from(self, 'current_page', target_object, target_name, backward)
+
+    def bind_current_page_from(
+        self,
+        target_object: Any,
+        target_name: str = "current_page",
+        backward: Callable[..., Any] = lambda x: x,
+    ) -> Self:
+        bind_from(self, "current_page", target_object, target_name, backward)
         return self
-    
-    def bind_num_pages_to(self,
-                        target_object: Any,
-                        target_name: str = 'num_pages',
-                        forward: Callable[..., Any] = lambda x: x,) -> Self:
-        bind_to(self, 'num_pages', target_object, target_name, forward)
+
+    def bind_num_pages_to(
+        self,
+        target_object: Any,
+        target_name: str = "num_pages",
+        forward: Callable[..., Any] = lambda x: x,
+    ) -> Self:
+        bind_to(self, "num_pages", target_object, target_name, forward)
         return self
-    
-    def bind_is_rendering_to(self,
-                        target_object: Any,
-                        target_name: str = 'is_rendering',
-                        forward: Callable[..., Any] = lambda x: x,) -> Self:
-        bind_to(self, 'is_rendering', target_object, target_name, forward)
+
+    def bind_is_rendering_to(
+        self,
+        target_object: Any,
+        target_name: str = "is_rendering",
+        forward: Callable[..., Any] = lambda x: x,
+    ) -> Self:
+        bind_to(self, "is_rendering", target_object, target_name, forward)
         return self
-    
-    def bind_selected_text_to(self,
-                        target_object: Any,
-                        target_name: str = 'selected_text',
-                        forward: Callable[..., Any] = lambda x: x,) -> Self:
-        bind_to(self, 'selected_text', target_object, target_name, forward)
+
+    def bind_selected_text_to(
+        self,
+        target_object: Any,
+        target_name: str = "selected_text",
+        forward: Callable[..., Any] = lambda x: x,
+    ) -> Self:
+        bind_to(self, "selected_text", target_object, target_name, forward)
         return self
 
     #
@@ -99,49 +121,38 @@ class PdfViewer(Element, component="pdf_viewer.js"):
         self.run_method("open_page", e)
 
     def _on_page_change_in_js(self, e: GenericEventArguments):
-        if(self.current_page == e.args):
+        if self.current_page == e.args:
             return
-        
+
         self.current_page = e.args
 
     def _on_number_pages_change_in_js(self, e: GenericEventArguments):
-        if(self.num_pages == e.args):
+        if self.num_pages == e.args:
             return
-        
+
         self.num_pages = e.args
 
     def _on_is_rendering_change_in_js(self, e: GenericEventArguments):
-        if(self.is_rendering == e.args):
+        if self.is_rendering == e.args:
             return
-        
+
         self.is_rendering = e.args
 
     def _on_selected_text_change_in_js(self, e: GenericEventArguments):
-        if(self.selected_text == e.args):
+        if self.selected_text == e.args:
             return
-        
+
         self.selected_text = e.args
-    
-
-    #
-    # Functions
-    #
-    # def previous_page(self):
-    #     self.run_method("previous_page")
-
-    # def next_page(self) -> None:
-    #     self.run_method("next_page")
-
 
     #
     # Helper for pdf.js library
     #
     def _load_worker(self, resource: str) -> None:
         # Load the worker from the same path as this file
-        resource_path = os.path.join(os.path.dirname(__file__), "lib", resource)
-        with open(resource_path, 'r') as f:
+        resource_path = os.path.join(os.path.dirname(__file__), "pdf_js", resource)
+        with open(resource_path, "r") as f:
             workerjs = f.read()
-        
+
         js_content = f"""
             var PDFJS = window['pdfjs-dist/build/pdf'];
             PDFJS.GlobalWorkerOptions.workerSrc = {workerjs};
@@ -158,6 +169,6 @@ class PdfViewer(Element, component="pdf_viewer.js"):
 
     def _load_lib_file(self, resource: str) -> str:
         # Load the resource from the same path as this file
-        resource_path = os.path.join(os.path.dirname(__file__), "lib", resource)
-        with open(resource_path, 'r') as f:
+        resource_path = os.path.join(os.path.dirname(__file__), "pdf_js", resource)
+        with open(resource_path, "r") as f:
             return f.read()
