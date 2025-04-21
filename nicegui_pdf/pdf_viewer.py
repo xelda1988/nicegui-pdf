@@ -1,3 +1,4 @@
+from uuid import uuid4
 from typing import Callable, Optional
 import os
 
@@ -9,7 +10,7 @@ class PdfViewer(Element, component="pdf_viewer.js"):
 
     def __init__(self, path: str, *, on_change: Optional[Callable] = None) -> None:
         super().__init__()
-        self._props['path'] = path
+        self._props["path"] = path
         self.on('change', on_change)
 
         # Load pdf_viewer.min.css from same path as this file

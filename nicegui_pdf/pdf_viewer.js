@@ -1,9 +1,9 @@
 export default {
     template: `
     <div>
-        <div id="pdf-contents" style="display: none;">
-            <canvas id="pdf-canvas" width="100%"></canvas>
-            <div id="text-layer" class="textLayer"></div>
+        <div :id="getPdfContentId()" style="display: none;">
+            <canvas :id="getPdfCanvasId()" width="100%"></canvas>
+            <div :id="getTextLayerId()" class="textLayer"></div>
         </div>
     </div>
     `,
@@ -13,15 +13,30 @@ export default {
     },
     data() {
       return {
+        id: this.uuidv4(),
         num_pages: 1,
         page_number: 1,
         pdf: null,
       };
     },
     methods: {
+      uuidv4() {
+        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+          (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+        );
+      },      
+      getPdfContentId(){
+        return "pdf-contents-" + this.id;
+      },
+      getPdfCanvasId(){
+        return "pdf-canvas-" + this.id;
+      },
+      getTextLayerId(){
+        return "text-layer-" + this.id;
+      },
       init() {
         var self = this;
-        self.canvas = $('#pdf-canvas').get(0);
+        self.canvas = $("#" + self.getPdfCanvasId()).get(0);
         self.canvas_ctx = self.canvas.getContext('2d');
         
         this.page_number = 1;
@@ -54,7 +69,7 @@ export default {
         PDFJS.getDocument({ url: pdf_url }).promise.then(function (pdf_doc) {
             self.pdf_doc = pdf_doc;
             self.num_pages = self.pdf_doc.numPages;
-            $("#pdf-contents").show();
+            $("#" + self.getPdfContentId()).show();
       
             // Show the first page
             self.showPage(1);
@@ -70,7 +85,7 @@ export default {
         self.pdf_doc.getPage(page_no).then(function (page) {
             // Make it slightly smaller than the parent container to ensure
             // the parent is always larger (e.g. a border is always shown)
-            var width = $("#pdf-contents").width();
+            var width = $("#" + self.getPdfContentId()).width();
             width -= parseInt(width * 0.01);
 
             // set the canvas width to the width of the parent container
@@ -99,19 +114,19 @@ export default {
                 return page.getTextContent();
             }).then(function (textContent) {
                 // Get canvas offset
-                var canvas_offset = $("#pdf-canvas").offset();
+                var canvas_offset = $("#" + self.getPdfCanvasId()).offset();
       
                 // Clear HTML for text layer
-                $("#text-layer").html('');
+                $("#" + self.getTextLayerId()).html('');
       
                 // Assign the CSS created to the text-layer element
-                document.getElementById('text-layer').style.setProperty('--scale-factor', viewport.scale);
-                $("#text-layer").css({ left: canvas_offset.left + 'px', top: canvas_offset.top + 'px'});
+                document.getElementById(self.getTextLayerId()).style.setProperty('--scale-factor', viewport.scale);
+                $("#" + self.getTextLayerId()).css({ left: canvas_offset.left + 'px', top: canvas_offset.top + 'px'});
       
                 // Pass the data to the method for rendering of text over the pdf canvas.
                 PDFJS.renderTextLayer({
                     textContentSource: textContent,
-                    container: $("#text-layer").get(0),
+                    container: $("#" + self.getTextLayerId()).get(0),
                     viewport: viewport,
                     textDivs: []
                 });
