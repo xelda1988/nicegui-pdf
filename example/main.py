@@ -1,5 +1,5 @@
 from nicegui import ui, app
-from nicegui_pdf.pdf_viewer import PdfViewer
+from nicegui_pdf import PdfViewer
 
 
 state = {

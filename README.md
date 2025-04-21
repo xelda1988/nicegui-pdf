@@ -8,7 +8,7 @@ A quick example on how to use the component is given next:
 
 ```python
 from nicegui import ui, app
-from nicegui_pdf.pdf_viewer import PdfViewer
+from nicegui_pdf import PdfViewer
 
 # [...] 
 
@@ -43,12 +43,14 @@ A full example demonstrating all features is given in `example/main.py`:
 
 
 ## ToDo's
-- [x] Basic viewer
-- [x] Text Overlay
-- [x] Binding of pages etc
-- [x] Binding of selected text
-- [x] Support resizing
-- [ ] Binding on path (load new pdf document)
+- [x] Integrate pdf.js and add a basic PDF viewer
+- [x] Bind current page
+- [x] Implement text overlay for selected text
+- [x] Bind to selected text
+- [x] Bind number of pages
+- [x] Binding for is rendering
+- [x] Resize PDF on window resize
+- [ ] Bind path (load new pdf document)
 - [ ] Highlight text (not 100% sure yet)
 
 
