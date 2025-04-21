@@ -50,7 +50,6 @@ A full example demonstrating all features is given in `example/main.py`:
 - [x] Support resizing
 - [ ] Binding on path (load new pdf document)
 - [ ] Highlight text (not 100% sure yet)
-- [ ] Push to pypi
 
 
 ## Disclaimer
