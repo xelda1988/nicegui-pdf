@@ -67,7 +67,7 @@ export default {
         self._showPage();
       },
       
-      
+
       /*
        * Private functions
        */
@@ -93,7 +93,6 @@ export default {
             // Make it slightly smaller than the parent container to ensure
             // the parent is always larger (e.g. a border is always shown)
             var width = $("#" + self.getPdfContentId()).width();
-            width -= parseInt(width * 0.01);
 
             // set the canvas width to the width of the parent container
             self.canvas.width = width;
