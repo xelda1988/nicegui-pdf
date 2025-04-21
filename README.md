@@ -15,4 +15,5 @@ This makes it easy to open a specific page or to get the content that is current
 - [x] Binding of selected text
 - [x] Support resizing
 - [ ] Binding on path
+- [ ] Highlight text (not 100% sure yet)
 - [ ] Push to pypi
