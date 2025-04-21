@@ -51,7 +51,10 @@ A full example demonstrating all features is given in `example/main.py`:
 - [x] Binding for is rendering
 - [x] Resize PDF on window resize
 - [ ] Bind path (load new pdf document)
-- [ ] Highlight text (not 100% sure yet)
+
+Optional
+- [ ] Highlight text
+- [ ] Show outline 
 
 
 ## Disclaimer
